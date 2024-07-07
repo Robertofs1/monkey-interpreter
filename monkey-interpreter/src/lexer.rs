@@ -35,7 +35,17 @@ impl Lexer {
         self.skip_whitespace();
 
         let token = match self.ch {
-            '=' => Lexer::new_token(TokenKind::Assign, self.ch),
+            '=' => {
+                if self.peek_char() == '=' {
+                    self.read_char();
+                    Token {
+                        kind: TokenKind::Eq,
+                        literal: String::from("=="),
+                    }
+                } else {
+                    Lexer::new_token(TokenKind::Assign, self.ch)
+                }
+            }
             ';' => Lexer::new_token(TokenKind::Semicolon, self.ch),
             '(' => Lexer::new_token(TokenKind::Lparen, self.ch),
             ')' => Lexer::new_token(TokenKind::Rparen, self.ch),
@@ -49,7 +59,17 @@ impl Lexer {
             },
             '-' => Lexer::new_token(TokenKind::Minus, self.ch),
             '/' => Lexer::new_token(TokenKind::Slash, self.ch),
-            '!' => Lexer::new_token(TokenKind::Bang, self.ch),
+            '!' => {
+                if  self.peek_char() == '=' {
+                    self.read_char();
+                    Token{
+                        kind: TokenKind::NotEq,
+                        literal: String::from("!="),
+                    }
+                }else {
+                 Lexer::new_token(TokenKind::Bang, self.ch)
+                }
+            }
             '*' => Lexer::new_token(TokenKind::Asteristk, self.ch),
             '<' => Lexer::new_token(TokenKind::Lt, self.ch),
             '>' => Lexer::new_token(TokenKind::Gt, self.ch),
@@ -77,6 +97,15 @@ impl Lexer {
         while self.ch.is_ascii_whitespace() {
             self.read_char();
         }
+    }
+
+    fn peek_char(&self) -> char{
+        return if self.read_position >= self.input.len(){
+            '\0'
+        }else {
+            self.input[self.read_position]
+        };
+
     }
 
     fn new_token(kind: TokenKind, ch: char) -> Token {
@@ -141,6 +170,9 @@ mod test {
         }else {
             return false;
         }
+
+        10 == 10;
+        10 != 9;
         "#;
 
         let expected: Vec<Token> = vec![
@@ -403,6 +435,38 @@ mod test {
             Token {
                 kind: TokenKind::Rbrace,
                 literal: "}".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::Eq,
+                literal: "==".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::NotEq,
+                literal: "!=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "9".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
             },
             Token {
                 kind: TokenKind::Eof,
