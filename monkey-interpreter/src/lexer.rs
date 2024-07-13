@@ -31,7 +31,7 @@ impl Lexer {
         self.read_position += 1;
     }
 
-    fn next_token(&mut self) -> Token {
+   pub fn next_token(&mut self) -> Token {
         self.skip_whitespace();
 
         let token = match self.ch {
@@ -60,14 +60,14 @@ impl Lexer {
             '-' => Lexer::new_token(TokenKind::Minus, self.ch),
             '/' => Lexer::new_token(TokenKind::Slash, self.ch),
             '!' => {
-                if  self.peek_char() == '=' {
+                if self.peek_char() == '=' {
                     self.read_char();
-                    Token{
+                    Token {
                         kind: TokenKind::NotEq,
                         literal: String::from("!="),
                     }
-                }else {
-                 Lexer::new_token(TokenKind::Bang, self.ch)
+                } else {
+                    Lexer::new_token(TokenKind::Bang, self.ch)
                 }
             }
             '*' => Lexer::new_token(TokenKind::Asteristk, self.ch),
@@ -99,13 +99,12 @@ impl Lexer {
         }
     }
 
-    fn peek_char(&self) -> char{
-        return if self.read_position >= self.input.len(){
+    fn peek_char(&self) -> char {
+        return if self.read_position >= self.input.len() {
             '\0'
-        }else {
+        } else {
             self.input[self.read_position]
         };
-
     }
 
     fn new_token(kind: TokenKind, ch: char) -> Token {
@@ -162,7 +161,7 @@ mod test {
         };
 
         let result = add(five, ten);
-        !-/*5; 
+        !-/*5;
         5 < 10 > 5;
 
         if( 5 < 10){
@@ -485,7 +484,7 @@ mod test {
             );
             assert_eq!(
                 exp_token.literal, recv_token.literal,
-                "tests[{idx}] 
+                "tests[{idx}]
             - literal wrong. expected={}, got={}",
                 exp_token.literal, recv_token.literal
             );

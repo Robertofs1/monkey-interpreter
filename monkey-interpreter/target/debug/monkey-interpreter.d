@@ -1,1 +1,1 @@
-E:\monkey-interpreter\monkey-interpreter\target\debug\monkey-interpreter.exe: E:\monkey-interpreter\monkey-interpreter\src\main.rs
+/home/roberto/rust_space/interpreter-using-rs/monkey-interpreter/target/debug/monkey-interpreter: /home/roberto/rust_space/interpreter-using-rs/monkey-interpreter/src/lexer.rs /home/roberto/rust_space/interpreter-using-rs/monkey-interpreter/src/main.rs /home/roberto/rust_space/interpreter-using-rs/monkey-interpreter/src/repl.rs /home/roberto/rust_space/interpreter-using-rs/monkey-interpreter/src/token.rs
