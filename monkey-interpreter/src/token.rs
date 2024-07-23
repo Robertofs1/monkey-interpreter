@@ -1,13 +1,14 @@
 use std::fmt::Display;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Default)]
 pub struct Token {
     pub kind: TokenKind,
     pub literal: String,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Default)]
 pub enum TokenKind {
+    #[default]
     Illegal,
     Eof,
 
@@ -23,6 +24,9 @@ pub enum TokenKind {
 
     Lt,
     Gt,
+
+    Eq,
+    NotEq,
 
     Comma,
     Semicolon,
@@ -69,6 +73,8 @@ impl Display for TokenKind {
             TokenKind::If => write!(f, "if"),
             TokenKind::Else => write!(f, "else"),
             TokenKind::Return => write!(f, "return"),
+            TokenKind::Eq => write!(f, "=="),
+            TokenKind::NotEq => write!(f, "!="),
         }
     }
 }
