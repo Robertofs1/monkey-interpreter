@@ -8,6 +8,7 @@ pub struct Parser {
     lexer: Lexer,
     cur_token: Token,
     peek_token: Token,
+    errors: Vec<String>,
 }
 
 impl Parser {
@@ -16,6 +17,7 @@ impl Parser {
             lexer,
             cur_token: Default::default(),
             peek_token: Default::default(),
+            errors: vec![],
         };
 
         parser.next_token();
@@ -32,7 +34,7 @@ impl Parser {
     pub fn parser_program(&mut self) -> Option<Program> {
         let mut program = Program { statements: vec![] };
 
-        while self.cur_token.kind != TokenKind::Eof {
+        while !self.cur_token_is(TokenKind::Eof) {
             if let Some(statment) = self.parse_statement() {
                 program.statements.push(statment);
             }
@@ -77,11 +79,11 @@ impl Parser {
     }
 
     fn expect_peek(&mut self, token_kind: TokenKind) -> bool {
-        if self.peek_token_is(token_kind) {
+        if self.peek_token_is(token_kind.clone()) {
             self.next_token();
             return true;
         }
-
+        self.peek_error(token_kind);
         false
     }
 
@@ -91,6 +93,18 @@ impl Parser {
 
     fn cur_token_is(&self, token_kind: TokenKind) -> bool {
         self.cur_token.kind == token_kind
+    }
+
+    fn errors(&self) -> &Vec<String> {
+        &self.errors
+    }
+
+    fn peek_error(&mut self, token_kind: TokenKind) {
+        let msg = format!(
+            "expected next token to be {}, got {} instead",
+            token_kind, self.peek_token.kind
+        );
+        self.errors.push(msg);
     }
 }
 #[cfg(test)]
@@ -113,6 +127,7 @@ mod test {
         let lexer = Lexer::new(input);
         let mut parser = Parser::new(lexer);
         let program = parser.parser_program();
+        check_parser_errors(parser);
 
         match program {
             Some(program) => {
@@ -158,5 +173,19 @@ mod test {
                 );
             }
         }
+    }
+
+    fn check_parser_errors(parser: Parser) {
+        let errors = parser.errors();
+
+        if errors.len() == 0 {
+            return;
+        }
+
+        for error in errors {
+            eprintln!("parser error: {}", error);
+        }
+
+        panic!("parser error present");
     }
 }
